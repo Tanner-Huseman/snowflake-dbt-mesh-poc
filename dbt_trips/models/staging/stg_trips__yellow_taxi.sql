@@ -29,6 +29,7 @@ renamed as (
         total_amount,
         congestion_surcharge,
         airport_fee,
+        cbd_congestion_fee,
         _load_timestamp
 
     from source

@@ -17,7 +17,7 @@ COPY INTO raw_db.trips.yellow_taxi (
     passenger_count, trip_distance, ratecodeid, store_and_fwd_flag,
     pulocationid, dolocationid, payment_type, fare_amount, extra,
     mta_tax, tip_amount, tolls_amount, improvement_surcharge,
-    total_amount, congestion_surcharge, airport_fee
+    total_amount, congestion_surcharge, airport_fee, cbd_congestion_fee
 )
 FROM (
     SELECT
@@ -39,24 +39,33 @@ FROM (
         $1:improvement_surcharge::FLOAT,
         $1:total_amount::FLOAT,
         $1:congestion_surcharge::FLOAT,
-        $1:Airport_fee::FLOAT
+        $1:Airport_fee::FLOAT,
+        $1:cbd_congestion_fee::FLOAT
     FROM @raw_db.public.trips_stage
 )
 FILE_FORMAT = (FORMAT_NAME = 'raw_db.public.parquet_trips')
 ON_ERROR = CONTINUE;
 
 -- ─── Weather pipe ─────────────────────────────────────────────────────────────
+-- Source: GHCNh PSV with ~200 pipe-delimited columns.
+-- Columns mapped by 1-indexed position from the PSV header:
+--   $1=STATION  $2=Station_name  $3=DATE  $12=temperature  $42=wind_speed
+--   $48=wind_gust  $54=precipitation  $60=relative_humidity
+--   $72=pres_wx_MW1  $126=snow_depth  $150=sky_condition
 
 CREATE OR REPLACE PIPE raw_db.weather.weather_pipe
     AUTO_INGEST = TRUE
-    COMMENT = 'Auto-ingest NOAA LCD CSV from S3 weather/ prefix'
+    COMMENT = 'Auto-ingest NOAA GHCNh PSV from S3 weather/ prefix'
 AS
 COPY INTO raw_db.weather.hourly_lga (
-    station, name, date,
-    hourlydrybulbtemperature, hourlyrelativehumidity, hourlywindspeed,
-    hourlyprecipitation, hourlyskyconditions, hourlypresentweathertype
+    station, station_name, date,
+    temperature, wind_speed, wind_gust, precipitation,
+    relative_humidity, snow_depth, sky_condition, pres_wx_mw1
 )
-FROM @raw_db.public.weather_stage
+FROM (
+    SELECT $1, $2, $3, $12, $42, $48, $54, $60, $126, $150, $72
+    FROM @raw_db.public.weather_stage
+)
 FILE_FORMAT = (FORMAT_NAME = 'raw_db.public.csv_weather')
 ON_ERROR = CONTINUE;
 
