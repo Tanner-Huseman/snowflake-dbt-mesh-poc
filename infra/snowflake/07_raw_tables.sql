@@ -5,6 +5,7 @@ USE ROLE poc_role;
 
 -- ─── TLC Yellow Taxi ──────────────────────────────────────────────────────────
 -- Schema matches the 2024 TLC Yellow Taxi Parquet schema.
+CREATE SCHEMA IF NOT EXISTS raw_db.trips;
 
 CREATE TABLE IF NOT EXISTS raw_db.trips.yellow_taxi (
     vendorid              NUMBER,
@@ -32,6 +33,7 @@ CREATE TABLE IF NOT EXISTS raw_db.trips.yellow_taxi (
 -- ─── NOAA LCD Hourly (LaGuardia) ─────────────────────────────────────────────
 -- Schema covers the key LCD columns. The full NOAA LCD export has 100+ columns;
 -- this table captures the fields needed for the weather domain models.
+CREATE SCHEMA IF NOT EXISTS raw_db.weather;
 
 CREATE TABLE IF NOT EXISTS raw_db.weather.hourly_lga (
     station                     VARCHAR,

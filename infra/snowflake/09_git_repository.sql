@@ -4,6 +4,7 @@
 
 USE ROLE accountadmin;
 USE DATABASE analytics_db;
+CREATE SCHEMA integrations;
 USE SCHEMA integrations;
 
 -- API integration authenticates Snowflake to GitHub over HTTPS.

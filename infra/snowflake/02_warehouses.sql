@@ -10,5 +10,5 @@ CREATE WAREHOUSE IF NOT EXISTS wh_poc_xs
     INITIALLY_SUSPENDED = TRUE
     COMMENT = 'Shared POC warehouse. Auto-suspends after 60s idle.';
 
--- Assign to the resource monitor created in resource_monitor.sql.
-ALTER WAREHOUSE wh_poc_xs SET RESOURCE_MONITOR = poc_resource_monitor;
+-- Resource monitor is set at the account level (resource_monitor.sql) and covers all warehouses.
+-- No per-warehouse attachment needed.
