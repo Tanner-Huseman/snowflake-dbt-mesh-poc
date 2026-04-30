@@ -1,0 +1,26 @@
+version: 2
+
+# These are domain data products published by dbt_trips and dbt_weather.
+# dbt_derived consumes them as sources — it has no raw sources of its own.
+# Column renames or type changes in these marts are breaking changes for this project.
+
+sources:
+  - name: trips_marts
+    database: analytics_db
+    schema: trips_marts
+    description: "Published data products from the dbt_trips domain project."
+    tables:
+      - name: fct_trips
+        description: "One row per taxi trip."
+      - name: agg_daily_revenue_by_zone
+        description: "Daily trip volume and revenue by pickup zone."
+
+  - name: weather_marts
+    database: analytics_db
+    schema: weather_marts
+    description: "Published data products from the dbt_weather domain project."
+    tables:
+      - name: fct_weather_hourly
+        description: "One row per (station, hour) of weather observations."
+      - name: agg_daily_weather
+        description: "Daily temperature, precipitation, humidity, and wind aggregates."

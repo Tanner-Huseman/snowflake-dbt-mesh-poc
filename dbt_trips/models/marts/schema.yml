@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: fct_trips
+    description: >
+      One row per trip. Incremental model keyed on trip_id (merge strategy).
+      Downstream consumers (dbt_derived) should source this mart directly.
+    columns:
+      - name: trip_id
+        description: "Surrogate key. Unique per trip."
+        tests:
+          - unique
+          - not_null
+      - name: payment_type
+        description: "TLC payment type code: 1=Credit card, 2=Cash, 3=No charge, 4=Dispute, 5=Unknown, 6=Voided."
+        tests:
+          - accepted_values:
+              values: [1, 2, 3, 4, 5, 6]
+              quote: false
+      - name: fare_amount
+        description: "Metered fare. Must be non-negative."
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+      - name: pickup_location_id
+        description: "References dim_pickup_zones.zone_id."
+        tests:
+          - relationships:
+              to: ref('dim_pickup_zones')
+              field: zone_id
+
+  - name: dim_pickup_zones
+    description: "TLC taxi zone reference, sourced from the taxi_zones seed (~265 rows)."
+    columns:
+      - name: zone_id
+        description: "TLC LocationID. Primary key."
+        tests:
+          - unique
+          - not_null
+      - name: borough
+        tests:
+          - not_null
+
+  - name: agg_daily_revenue_by_zone
+    description: >
+      Daily aggregation of trip volume and revenue by pickup zone.
+      Published mart consumed by dbt_derived.mart_trip_demand_weather.
+    columns:
+      - name: trip_date
+        tests:
+          - not_null
+      - name: zone_id
+        tests:
+          - not_null
+      - name: trip_count
+        tests:
+          - not_null

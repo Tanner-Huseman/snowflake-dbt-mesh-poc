@@ -1,0 +1,49 @@
+version: 2
+
+models:
+  - name: fct_weather_hourly
+    description: >
+      One row per (station, hour) for LaGuardia Airport. Full-refresh table.
+      Published mart consumed by dbt_derived.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - station_id
+            - observation_hour
+    columns:
+      - name: station_id
+        tests:
+          - not_null
+      - name: observation_hour
+        tests:
+          - not_null
+      - name: temperature_f
+        description: "Dry bulb temperature in Fahrenheit. Must be in a plausible range for NYC."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: -30
+              max_value: 120
+
+  - name: dim_weather_stations
+    description: "Station reference. One row per station ID."
+    columns:
+      - name: station_id
+        tests:
+          - unique
+          - not_null
+
+  - name: agg_daily_weather
+    description: >
+      Daily aggregation of temperature, precipitation, humidity, and wind speed.
+      Published mart consumed by dbt_derived.mart_trip_demand_weather.
+    columns:
+      - name: weather_date
+        tests:
+          - not_null
+      - name: station_id
+        tests:
+          - not_null
+      - name: avg_temp_f
+        tests:
+          - not_null

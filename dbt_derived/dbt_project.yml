@@ -1,0 +1,22 @@
+name: 'dbt_derived'
+version: '1.0.0'
+config-version: 2
+
+profile: 'snowflake_poc'
+
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  dbt_derived:
+    marts:
+      +materialized: table
+      +database: analytics_db
+      +schema: derived
+
+vars:
+  analytics_database: analytics_db

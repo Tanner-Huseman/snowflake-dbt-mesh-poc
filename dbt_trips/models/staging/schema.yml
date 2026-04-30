@@ -1,0 +1,32 @@
+version: 2
+
+sources:
+  - name: raw_trips
+    database: raw_db
+    schema: trips
+    description: "Raw TLC Yellow Taxi data ingested via Snowpipe. Append-only."
+    loaded_at_field: _load_timestamp
+    freshness:
+      warn_after: {count: 6, period: hour}
+      error_after: {count: 24, period: hour}
+    tables:
+      - name: yellow_taxi
+        description: "Raw Yellow Taxi trip records from TLC Parquet files."
+
+models:
+  - name: stg_trips__yellow_taxi
+    description: >
+      Light cleaning and column renaming of raw TLC Yellow Taxi data.
+      One row per trip. Materialized as a view — no storage cost.
+    columns:
+      - name: trip_id
+        description: "Surrogate key derived from vendor_id + pickup_datetime + dropoff_datetime."
+        tests:
+          - unique
+          - not_null
+      - name: pickup_datetime
+        tests:
+          - not_null
+      - name: total_amount
+        tests:
+          - not_null

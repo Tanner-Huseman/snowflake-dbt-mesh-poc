@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: mart_trip_demand_weather
+    description: >
+      Cross-domain mart joining daily trip aggregates with daily weather aggregates.
+      One row per (date, pickup zone). The primary analytical output of the mesh POC.
+    columns:
+      - name: trip_date
+        tests:
+          - not_null
+      - name: zone_id
+        tests:
+          - not_null
+      - name: trip_count
+        tests:
+          - not_null
+      - name: avg_temp_f
+        tests:
+          - not_null
+
+  - name: mart_hourly_demand_vs_temperature
+    description: >
+      Hourly trip volume and fare joined with hourly temperature and conditions.
+      Powers the "weather effect" scatter charts in the Streamlit Combined tab.
+    columns:
+      - name: trip_hour
+        tests:
+          - not_null
+          - unique
+      - name: trip_count
+        tests:
+          - not_null
+      - name: temperature_f
+        tests:
+          - not_null

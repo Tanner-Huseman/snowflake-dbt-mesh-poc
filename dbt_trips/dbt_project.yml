@@ -1,0 +1,37 @@
+name: 'dbt_trips'
+version: '1.0.0'
+config-version: 2
+
+profile: 'snowflake_poc'
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  dbt_trips:
+    staging:
+      +materialized: view
+      +database: analytics_db
+      +schema: trips_staging
+    marts:
+      +materialized: table
+      +database: analytics_db
+      +schema: trips_marts
+      fct_trips:
+        +materialized: incremental
+        +incremental_strategy: merge
+        +unique_key: trip_id
+
+seeds:
+  dbt_trips:
+    +database: analytics_db
+    +schema: trips_staging
+
+vars:
+  raw_database: raw_db
+  analytics_database: analytics_db

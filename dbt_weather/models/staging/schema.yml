@@ -1,0 +1,31 @@
+version: 2
+
+sources:
+  - name: raw_weather
+    database: raw_db
+    schema: weather
+    description: "Raw NOAA LCD hourly weather data ingested via Snowpipe. Append-only."
+    loaded_at_field: _load_timestamp
+    freshness:
+      warn_after: {count: 6, period: hour}
+      error_after: {count: 24, period: hour}
+    tables:
+      - name: hourly_lga
+        description: "Raw NOAA LCD hourly observations for LaGuardia Airport (USW00014732)."
+
+models:
+  - name: stg_weather__hourly_lga
+    description: >
+      Cleaned and typed hourly weather observations for LaGuardia Airport.
+      Handles NOAA quirks: 'T' (trace precipitation) → 0.001, 'M' (missing) → NULL.
+      Materialized as a view.
+    columns:
+      - name: station_id
+        tests:
+          - not_null
+      - name: observation_hour
+        description: "Truncated to the hour. Used as the join key with trip data."
+        tests:
+          - not_null
+      - name: temperature_f
+        description: "Dry bulb temperature in Fahrenheit."
