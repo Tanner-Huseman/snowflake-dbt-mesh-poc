@@ -1,12 +1,12 @@
 snowflake_poc:
-  target: prod
+  target: dev
   outputs:
     prod:
       type: snowflake
       account: "TTRYKFI-SCB24244" # e.g. xy12345.us-east-1
       user: "<your-username>"
       password: "<your-password>" # or use authenticator: externalbrowser
-      role: transformer
+      role: poc_role
       database: analytics_db
       warehouse: wh_poc_xs
       schema: derived # default; overridden per model in dbt_project.yml

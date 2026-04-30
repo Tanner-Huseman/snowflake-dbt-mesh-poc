@@ -25,7 +25,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
-from airflow.providers.snowflake.sensors.snowflake import SnowflakeSensor
+from airflow.providers.common.sql.sensors.sql import SqlSensor
 from airflow.utils.trigger_rule import TriggerRule
 
 SNOWFLAKE_CONN_ID = "snowflake_default"
@@ -74,7 +74,7 @@ with DAG(
 
     # ── Sensors ────────────────────────────────────────────────────────────────
 
-    sensor_trips_loaded = SnowflakeSensor(
+    sensor_trips_loaded = SqlSensor(
         task_id="sensor_trips_loaded",
         conn_id=SNOWFLAKE_CONN_ID,
         sql=_TRIPS_SENSOR_SQL,
@@ -83,7 +83,7 @@ with DAG(
         mode="poke",
     )
 
-    sensor_weather_loaded = SnowflakeSensor(
+    sensor_weather_loaded = SqlSensor(
         task_id="sensor_weather_loaded",
         conn_id=SNOWFLAKE_CONN_ID,
         sql=_WEATHER_SENSOR_SQL,
