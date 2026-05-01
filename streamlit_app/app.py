@@ -2,9 +2,9 @@
 Streamlit in Snowflake — dbt Mesh POC Dashboard
 
 Three tabs:
-  1. Trips     — charts from analytics_db.trips_marts
-  2. Weather   — charts from analytics_db.weather_marts
-  3. Combined  — cross-domain charts from analytics_db.derived
+  1. Trips     — charts from analytics_db.dbt
+  2. Weather   — charts from analytics_db.dbt
+  3. Combined  — cross-domain charts from analytics_db.dbt
 
 Deploy: Snowflake UI → Streamlit → New Streamlit App → paste this file.
 The app runs inside Snowflake, so snowflake.snowpark is available natively.
@@ -83,7 +83,7 @@ with tab_trips:
             SUM(trip_count)    AS trip_count,
             SUM(total_revenue) AS total_revenue,
             AVG(avg_fare)      AS avg_fare
-        FROM analytics_db.trips_marts.agg_daily_revenue_by_zone
+        FROM analytics_db.dbt.agg_daily_revenue_by_zone
         GROUP BY 1
         ORDER BY 1
     """
@@ -107,7 +107,7 @@ with tab_trips:
             borough,
             SUM(trip_count)    AS trip_count,
             SUM(total_revenue) AS total_revenue
-        FROM analytics_db.trips_marts.agg_daily_revenue_by_zone
+        FROM analytics_db.dbt.agg_daily_revenue_by_zone
         GROUP BY 1, 2
         ORDER BY 3 DESC
         LIMIT 10
@@ -133,7 +133,7 @@ with tab_weather:
             total_precip_in,
             avg_humidity_pct,
             avg_wind_mph
-        FROM analytics_db.weather_marts.agg_daily_weather
+        FROM analytics_db.dbt.agg_daily_weather
         ORDER BY 1
     """
     weather_df = query(weather_daily_sql)
@@ -159,7 +159,7 @@ with tab_weather:
 with tab_combined:
     st.header("Combined: Trip Demand vs. Weather Conditions")
     st.caption(
-        "Cross-domain data from `analytics_db.derived` — the output of the dbt_derived mesh project."
+        "Cross-domain data from `analytics_db.dbt` — the output of the dbt_derived mesh project."
     )
 
     combined_sql = """
@@ -170,7 +170,7 @@ with tab_combined:
             AVG(avg_temp_f)    AS avg_temp_f,
             SUM(total_precip_in) AS total_precip_in,
             MAX(weather_category) AS weather_category
-        FROM analytics_db.derived.mart_trip_demand_weather
+        FROM analytics_db.dbt.mart_trip_demand_weather
         GROUP BY 1
         ORDER BY 1
     """
@@ -200,7 +200,7 @@ with tab_combined:
             trip_hour,
             trip_count,
             temperature_f
-        FROM analytics_db.derived.mart_hourly_demand_vs_temperature
+        FROM analytics_db.dbt.mart_hourly_demand_vs_temperature
         ORDER BY 1
     """
     try:

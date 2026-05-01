@@ -11,8 +11,8 @@ renamed as (
         ]) }}                               as trip_id,
 
         vendorid                            as vendor_id,
-        tpep_pickup_datetime                as pickup_datetime,
-        tpep_dropoff_datetime               as dropoff_datetime,
+        TO_TIMESTAMP_NTZ(tpep_pickup_datetime::NUMBER, 6)  as pickup_datetime,
+        TO_TIMESTAMP_NTZ(tpep_dropoff_datetime::NUMBER, 6) as dropoff_datetime,
         passenger_count,
         trip_distance,
         ratecodeid                          as rate_code_id,
@@ -35,7 +35,7 @@ renamed as (
     from source
     where tpep_pickup_datetime is not null
       and tpep_dropoff_datetime is not null
-      and tpep_dropoff_datetime > tpep_pickup_datetime
+      and tpep_dropoff_datetime::NUMBER > tpep_pickup_datetime::NUMBER
 )
 
 select * from renamed

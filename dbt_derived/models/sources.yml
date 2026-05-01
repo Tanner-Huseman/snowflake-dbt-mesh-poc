@@ -17,7 +17,7 @@ sources:
 
   - name: weather_marts
     database: analytics_db
-    schema: weather_marts
+    schema: dbt
     description: "Published data products from the dbt_weather domain project."
     tables:
       - name: fct_weather_hourly

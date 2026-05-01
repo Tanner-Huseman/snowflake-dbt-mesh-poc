@@ -9,5 +9,5 @@ snowflake_poc:
       role: poc_role
       database: analytics_db
       warehouse: wh_poc_xs
-      schema: weather_staging # default; overridden per model in dbt_project.yml
+      schema: dbt # default; overridden per model in dbt_project.yml
       threads: 4

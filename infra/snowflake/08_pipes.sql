@@ -22,8 +22,8 @@ COPY INTO raw_db.trips.yellow_taxi (
 FROM (
     SELECT
         $1:VendorID::NUMBER,
-        $1:tpep_pickup_datetime::TIMESTAMP_NTZ,
-        $1:tpep_dropoff_datetime::TIMESTAMP_NTZ,
+        $1:tpep_pickup_datetime::VARCHAR,
+        $1:tpep_dropoff_datetime::VARCHAR,
         $1:passenger_count::NUMBER,
         $1:trip_distance::FLOAT,
         $1:RatecodeID::NUMBER,

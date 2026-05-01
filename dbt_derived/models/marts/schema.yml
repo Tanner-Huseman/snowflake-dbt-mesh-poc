@@ -34,3 +34,22 @@ models:
       - name: temperature_f
         tests:
           - not_null
+
+  - name: mart_trip_weather_detail
+    description: >
+      Trip-level join with hourly weather at pickup time. One row per trip.
+      Enables payment type × weather analysis, tip distributions, and per-trip
+      weather-effect analytics not available in the pre-aggregated marts.
+    columns:
+      - name: trip_id
+        tests:
+          - not_null
+          - unique
+      - name: trip_date
+        tests:
+          - not_null
+      - name: weather_category
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['rainy', 'freezing', 'cold', 'hot', 'mild']

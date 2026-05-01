@@ -1,8 +1,8 @@
-name: 'dbt_weather'
-version: '1.0.0'
+name: "dbt_weather"
+version: "1.0.0"
 config-version: 2
 
-profile: 'snowflake_poc'
+profile: "snowflake_poc"
 
 model-paths: ["models"]
 seed-paths: ["seeds"]
@@ -17,13 +17,13 @@ models:
     staging:
       +materialized: view
       +database: analytics_db
-      +schema: weather_staging
+      # +schema: weather_staging
     marts:
       +materialized: table
       +database: analytics_db
-      +schema: weather_marts
+      # +schema: weather_marts
 
 vars:
   raw_database: raw_db
   analytics_database: analytics_db
-  lga_station_id: 'USW00014732'
+  lga_station_id: "USW00014732"
